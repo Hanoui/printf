@@ -1,18 +1,6 @@
-#include <unistd.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include "main.h"
-
-/**
- * _putchar - Writes a character to stdout
- * @c: The character to write
- *
- * Return: On success, return the number of characters written.
- * On error, -1 is returned, and errno is set appropriately.
- */
-int _putchar(char c)
-{
-	return write(1, &c, 1);
-}
 
 /**
  * _printf - Prints output according to a format.
@@ -23,8 +11,6 @@ int _putchar(char c)
 int _printf(const char *format, ...)
 {
 	int i, count = 0;
-	char ch;
-	char *str;
 	va_list args;
 
 	va_start(args, format);
@@ -36,34 +22,51 @@ int _printf(const char *format, ...)
 			i++;
 			switch (format[i])
 			{
-				case 'c':
-					ch = (char)va_arg(args, int);
-					count += _putchar(ch);
-					break;
-				case 's':
-					str = va_arg(args, char *);
-					while (*str)
-					{
-						count += _putchar(*str);
-						str++;
-					}
-					break;
-				case '%':
-					count += _putchar('%');
+				case 'd':
+				case 'i':
+					count += print_number(va_arg(args, int));
 					break;
 				default:
-					count += _putchar('%');
-					count += _putchar(format[i]);
+					putchar('%');
+					putchar(format[i]);
+					count += 2;
 					break;
 			}
 		}
 		else
 		{
-			count += _putchar(format[i]);
+			putchar(format[i]);
+			count++;
 		}
 	}
 
 	va_end(args);
+
+	return (count);
+}
+
+/**
+ * print_number - Prints a number.
+ * @n: The number to print.
+ *
+ * Return: The number of characters printed.
+ */
+int print_number(int n)
+{
+	int count = 0;
+
+	if (n < 0)
+	{
+		putchar('-');
+		count++;
+		n = -n;
+	}
+
+	if (n / 10)
+		count += print_number(n / 10);
+
+	putchar((n % 10) + '0');
+	count++;
 
 	return (count);
 }
