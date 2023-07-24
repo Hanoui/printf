@@ -11,6 +11,9 @@
 int _printf(const char *format, ...)
 {
 	int i, count = 0;
+	char ch;
+	char *str;
+	int num;
 	va_list args;
 
 	va_start(args, format);
@@ -22,9 +25,34 @@ int _printf(const char *format, ...)
 			i++;
 			switch (format[i])
 			{
+				case 'c':
+					ch = (char)va_arg(args, int);
+					putchar(ch);
+					count++;
+					break;
+				case 's':
+					str = va_arg(args, char *);
+					while (*str)
+					{
+						putchar(*str);
+						str++;
+						count++;
+					}
+					break;
 				case 'd':
 				case 'i':
-					count += print_number(va_arg(args, int));
+					num = va_arg(args, int);
+					if (num < 0)
+					{
+						putchar('-');
+						count++;
+						num = -num;
+					}
+					count += print_number(num);
+					break;
+				case '%':
+					putchar('%');
+					count++;
 					break;
 				default:
 					putchar('%');
@@ -46,21 +74,14 @@ int _printf(const char *format, ...)
 }
 
 /**
- * print_number - Prints a number.
+ * print_number - Prints a number recursively.
  * @n: The number to print.
  *
  * Return: The number of characters printed.
  */
-int print_number(int n)
+int print_number(unsigned int n)
 {
 	int count = 0;
-
-	if (n < 0)
-	{
-		putchar('-');
-		count++;
-		n = -n;
-	}
 
 	if (n / 10)
 		count += print_number(n / 10);
