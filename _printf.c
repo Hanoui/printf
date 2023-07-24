@@ -10,67 +10,59 @@
  */
 int _printf(const char *format, ...)
 {
-	int i, count = 0;
-	char ch;
-	char *str;
-	int num;
-	va_list args;
+    int i, count = 0;
+    char ch;
+    char *str;
+    va_list args;
 
-	va_start(args, format);
+    va_start(args, format);
 
-	for (i = 0; format[i] != '\0'; i++)
-	{
-		if (format[i] == '%')
-		{
-			i++;
-			switch (format[i])
-			{
-				case 'c':
-					ch = (char)va_arg(args, int);
-					putchar(ch);
-					count++;
-					break;
-				case 's':
-					str = va_arg(args, char *);
-					while (*str)
-					{
-						putchar(*str);
-						str++;
-						count++;
-					}
-					break;
-				case 'd':
-				case 'i':
-					num = va_arg(args, int);
-					if (num < 0)
-					{
-						putchar('-');
-						count++;
-						num = -num;
-					}
-					count += print_number(num);
-					break;
-				case '%':
-					putchar('%');
-					count++;
-					break;
-				default:
-					putchar('%');
-					putchar(format[i]);
-					count += 2;
-					break;
-			}
-		}
-		else
-		{
-			putchar(format[i]);
-			count++;
-		}
-	}
+    for (i = 0; format[i] != '\0'; i++)
+    {
+        if (format[i] == '%')
+        {
+            i++;
+            switch (format[i])
+            {
+                case 'c':
+                    ch = (char)va_arg(args, int);
+                    putchar(ch);
+                    count++;
+                    break;
+                case 's':
+                    str = va_arg(args, char *);
+                    while (*str)
+                    {
+                        putchar(*str);
+                        str++;
+                        count++;
+                    }
+                    break;
+                case '%':
+                    putchar('%');
+                    count++;
+                    break;
+                case 'd':
+                case 'i':
+                    count += print_number(va_arg(args, int));
+                    break;
+                default:
+                    putchar('%');
+                    putchar(format[i]);
+                    count += 2;
+                    break;
+            }
+        }
+        else
+        {
+            putchar(format[i]);
+            count++;
+        }
+    }
 
-	va_end(args);
+    va_end(args);
 
-	return (count);
+    return (count);
 }
 
 /**
@@ -79,16 +71,26 @@ int _printf(const char *format, ...)
  *
  * Return: The number of characters printed.
  */
-int print_number(unsigned int n)
+int print_number(int n)
 {
-	int count = 0;
+    unsigned int num;
 
-	if (n / 10)
-		count += print_number(n / 10);
+    if (n < 0)
+    {
+        putchar('-');
+        num = -n;
+    }
+    else
+    {
+        num = n;
+    }
 
-	putchar((n % 10) + '0');
-	count++;
+    if (num / 10 != 0)
+    {
+        print_number(num / 10);
+    }
 
-	return (count);
+    putchar((num % 10) + '0');
+    return (1);
 }
 
